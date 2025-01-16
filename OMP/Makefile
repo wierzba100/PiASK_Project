@@ -1,14 +1,23 @@
 EXEC = sobel_OMP
 
-SRC = main.c
+SRC = main.c ../Tools/tools.c
+OBJ = main.o ../Tools/tools.o
 
 CC = gcc
 CFLAGS = -fopenmp -Wall -O2
+INCLUDES = -I../Tools
+LIBS = -lpng
 
 all: $(EXEC)
 
-$(EXEC): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $^
+$(EXEC): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+main.o: main.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+../Tools/tools.o: ../Tools/tools.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -f $(EXEC)
+	rm -f $(EXEC) $(OBJ)
