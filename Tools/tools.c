@@ -3,29 +3,33 @@
 #include <stdlib.h>
 #include <png.h>
 
-unsigned char **convert_to_grayscale(const char *filename, int *out_width, int *out_height) {
+unsigned char **convert_to_grayscale(const char *filename, unsigned int *out_width, unsigned int *out_height) {
     FILE *fp = fopen(filename, "rb");
-    if (!fp) {
+    if (!fp)
+    {
         perror("Error opening file");
         exit(EXIT_FAILURE);
     }
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if (!png) {
+    if (!png)
+    {
         fclose(fp);
         fprintf(stderr, "Failed to create PNG read struct\n");
         exit(EXIT_FAILURE);
     }
 
     png_infop info = png_create_info_struct(png);
-    if (!info) {
+    if (!info)
+    {
         png_destroy_read_struct(&png, NULL, NULL);
         fclose(fp);
         fprintf(stderr, "Failed to create PNG info struct\n");
         exit(EXIT_FAILURE);
     }
 
-    if (setjmp(png_jmpbuf(png))) {
+    if (setjmp(png_jmpbuf(png)))
+    {
         png_destroy_read_struct(&png, &info, NULL);
         fclose(fp);
         fprintf(stderr, "Error during PNG reading\n");
@@ -55,14 +59,16 @@ unsigned char **convert_to_grayscale(const char *filename, int *out_width, int *
     png_read_update_info(png, info);
 
     png_bytep *row_pointers = malloc(sizeof(png_bytep) * height);
-    for (int y = 0; y < height; y++) {
+    for (int y = 0; y < height; y++)
+    {
         row_pointers[y] = malloc(png_get_rowbytes(png, info));
     }
 
     png_read_image(png, row_pointers);
 
     unsigned char **gray_image = malloc(height * sizeof(unsigned char *));
-    for (int y = 0; y < height; y++) {
+    for (int y = 0; y < height; y++)
+    {
         gray_image[y] = malloc(width * sizeof(unsigned char));
         for (int x = 0; x < width; x++) {
             png_bytep px = &(row_pointers[y][x * 3]);
@@ -70,7 +76,8 @@ unsigned char **convert_to_grayscale(const char *filename, int *out_width, int *
         }
     }
 
-    for (int y = 0; y < height; y++) {
+    for (int y = 0; y < height; y++)
+    {
         free(row_pointers[y]);
     }
     free(row_pointers);
@@ -85,29 +92,33 @@ unsigned char **convert_to_grayscale(const char *filename, int *out_width, int *
 }
 
 
-void convert_to_png(const char *filename, unsigned char **gray_image, int width, int height) {
+void convert_to_png(const char *filename, unsigned char **gray_image, unsigned int width, unsigned int height) {
     FILE *fp = fopen(filename, "wb");
-    if (!fp) {
+    if (!fp)
+    {
         perror("Error opening file for writing");
         exit(EXIT_FAILURE);
     }
 
     png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if (!png) {
+    if (!png)
+    {
         fclose(fp);
         fprintf(stderr, "Failed to create PNG write struct\n");
         exit(EXIT_FAILURE);
     }
 
     png_infop info = png_create_info_struct(png);
-    if (!info) {
+    if (!info)
+    {
         png_destroy_write_struct(&png, NULL);
         fclose(fp);
         fprintf(stderr, "Failed to create PNG info struct\n");
         exit(EXIT_FAILURE);
     }
 
-    if (setjmp(png_jmpbuf(png))) {
+    if (setjmp(png_jmpbuf(png)))
+    {
         png_destroy_write_struct(&png, &info);
         fclose(fp);
         fprintf(stderr, "Error during PNG writing\n");
@@ -125,7 +136,8 @@ void convert_to_png(const char *filename, unsigned char **gray_image, int width,
     png_write_info(png, info);
 
     png_bytep *row_pointers = malloc(sizeof(png_bytep) * height);
-    for (int y = 0; y < height; y++) {
+    for (int y = 0; y < height; y++)
+    {
         row_pointers[y] = malloc(width * sizeof(unsigned char));
         for (int x = 0; x < width; x++) {
             row_pointers[y][x] = gray_image[y][x];
@@ -134,7 +146,8 @@ void convert_to_png(const char *filename, unsigned char **gray_image, int width,
 
     png_write_image(png, row_pointers);
 
-    for (int y = 0; y < height; y++) {
+    for (int y = 0; y < height; y++)
+    {
         free(row_pointers[y]);
     }
     free(row_pointers);
