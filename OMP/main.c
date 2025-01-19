@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         }
 
 
-    convert_to_png("../Images/output.png", output, width, height);
+    convert_to_png("../Images/output_OMP.png", output, width, height);
 
     for (int y = 0; y < height; y++) {
         free(gray_image[y]);

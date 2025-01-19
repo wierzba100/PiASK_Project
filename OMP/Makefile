@@ -6,7 +6,7 @@ OBJ = main.o ../Tools/tools.o
 CC = gcc
 CFLAGS = -fopenmp -Wall -O3
 INCLUDES = -I../Tools
-LIBS = -lpng
+LIBS = -lpng -lm
 
 all: $(EXEC)
 
